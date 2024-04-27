@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Intro</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Intro</h1>
+
+
+
+<hr />
+<div id="sec-what-it-does" class="section level2">
+<h2>What it does</h2>
+<ul>
+<li><p>This package is designed for identifying disease cases from admin
+data for epidemiological studies. The implementation focused on code
+readability and re-usability. Three types of functions are
+included:</p></li>
+<li><p>Interactive functions (e.g., <code>identify_row()</code>,
+<code>exclude()</code>, <code>fetch_var()</code>) based on filter and
+joins from dplyr with tweaks that fix SQL translation or add features
+that are not natively support by SQL. They also work for local
+data.frame, and some use ‘data.table’ package
+(<code>vignette(&quot;datatable-intro&quot;, package = &quot;data.table&quot;)</code>) to
+speed up processing time for large data. These functions are not as
+flexible as <code>dplyr::filter()</code>, but they are general enough to
+be useful outside health research.</p></li>
+<li><p>Call-building functions (e.g., <code>build_def()</code>,
+<code>execute_def()</code>) that facilitate batch execution and re-use
+of case definitions. In essence, <code>build_def</code> creates codes of
+definitions (which is chain of the interactive functions, e.g.,
+<code>define_case()</code>) that are not immediately ran.
+<code>execute_def</code> runs built definitions with different input
+data.</p></li>
+<li><p>Miscellaneous functions such as computing age, collapsing records
+within a time range into one episode, and more (on-going effort) with
+built-in checks signalling if things could go wrong.</p></li>
+</ul>
+<div id="motivation" class="section level3">
+<h3>Motivation</h3>
+<p>Administrative health data data are often stored on database with
+strict security measures which may disable permission to write temporary
+tables. Writing queries without being able to cache intermediate results
+is challenging, especially when the data is too large to be downloaded
+from database into R (i.e., local memory) without some filtering
+process. The lack of regular expression support in SQL makes writing
+queries for searching ICD codes even more painful.</p>
+<p>The ‘dbplyr’ package not only translates ‘dplyr’ syntax to SQL but
+also make nesting sub-queries easy with the pipe operator. With
+‘dbplyr’, complex query script can be built from nested sub-queries
+instead of writing temporary tables at a cost of performance
+(sub-queries have to be ran again and again if it was called multiple
+times). Nevertheless, building complex queries with ‘dbplyr’ is a useful
+approach to push computation onto the SQL server that is often much more
+efficient and resourceful than the user’s (virtual) machine.</p>
+<p>However, ‘dbplyr’ SQL translations failed at some places for the
+intended use case and needs fixing. The motivation of this package is to
+ease the pain from these issues for analyst who regularly works with
+healthcare database.</p>
+<hr />
+</div>
+</div>
+<div id="sec-installation" class="section level2">
+<h2>Installation</h2>
+<p>Simply run:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;kevinHzq/healthdb&quot;</span>, <span class="at">build_vignettes =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>We will also need the following packages for this demo.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;dplyr&#39; was built under R version 4.3.2</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;dbplyr&#39; was built under R version 4.3.3</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;lubridate&#39; was built under R version 4.3.2</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="fu">library</span>(glue)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;glue&#39; was built under R version 4.3.3</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;purrr&#39; was built under R version 4.3.2</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="fu">library</span>(healthdb)</span></code></pre></div>
+</div>
+<div id="sec-intended-use-case" class="section level2">
+<h2>Intended use case</h2>
+<p>Consider the case definition of substance use disorder (SUD) from <a href="http://www.bccdc.ca/resource-gallery/Documents/Chronic-Disease-Dashboard/substance-use-disorder.pdf">British
+Columbia Centre for Disease Control’s Chronic Disease Dashboard</a>,</p>
+<blockquote>
+<p>One or more hospitalization with a substance use disorder diagnostic
+code, OR Two or more physician visits with a substance use disorder
+diagnostic code within one year.</p>
+</blockquote>
+<p>We are going to implement this definition. First, let’s make a demo
+data sets for the two sources:</p>
+<ol style="list-style-type: decimal">
+<li><p>Physician claims with multiple columns of <a href="https://www2.gov.bc.ca/gov/content/health/practitioner-professional-resources/msp/physicians/diagnostic-code-descriptions-icd-9">ICD-9</a>
+diagnostic codes</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># make_test_dat() makes either a toy data.frame or database table in memory with known number of rows that satisfy the query we will show later</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>claim_db <span class="ot">&lt;-</span> <span class="fu">make_test_dat</span>(<span class="at">vals_kept =</span> <span class="fu">c</span>(<span class="st">&quot;303&quot;</span>, <span class="st">&quot;304&quot;</span>, <span class="st">&quot;305&quot;</span>, <span class="st">&quot;291&quot;</span>, <span class="st">&quot;292&quot;</span>, <span class="fu">glue</span>(<span class="st">&quot;30{30:59}&quot;</span>), <span class="fu">glue</span>(<span class="st">&quot;29{10:29}&quot;</span>), <span class="at">noise_val =</span> <span class="fu">c</span>(<span class="st">&quot;999&quot;</span>, <span class="st">&quot;111&quot;</span>)), <span class="at">type =</span> <span class="st">&quot;database&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co"># this is a database table</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># note that in-memory SQLite database stores dates as numbers</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>claim_db <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; # Source:   SQL [6 x 6]</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.45.2 [:memory:]</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1    51       1 16660 999   999     999    </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2    24       1 17464 3048  3040    &lt;NA&gt;   </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3    14       2 17640 3041  3047    &lt;NA&gt;   </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 4    37       3 16948 2913  3035    999    </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 5    91       4 16712 999   999     999    </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 6    82       4 16760 999   999     &lt;NA&gt;</span></span></code></pre></div></li>
+<li><p>Hospitalization with <a href="https://en.wikipedia.org/wiki/ICD-10">ICD-10</a> codes</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>hosp_df <span class="ot">&lt;-</span> <span class="fu">make_test_dat</span>(<span class="at">vals_kept =</span> <span class="fu">c</span>(<span class="fu">glue</span>(<span class="st">&quot;F{10:19}&quot;</span>), <span class="fu">glue</span>(<span class="st">&quot;F{100:199}&quot;</span>), <span class="at">noise_val =</span> <span class="st">&quot;999&quot;</span>), <span class="at">type =</span> <span class="st">&quot;data.frame&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># this is a local data.frame/tibble</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>hosp_df <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;   uid clnt_id      dates diagx diagx_1 diagx_2</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1  43       1 2015-08-13  F156    F144    F168</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2  16       1 2017-10-25   F12    F132    &lt;NA&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3   6       2 2018-04-19  F133    F128    &lt;NA&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 4  29       3 2016-05-27  F130    F164     999</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 5  83       4 2015-10-04   999     999    &lt;NA&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 6  74       4 2015-11-21   999    &lt;NA&gt;     999</span></span></code></pre></div></li>
+</ol>
+</div>
+<div id="interactive-functions" class="section level2">
+<h2>Interactive functions</h2>
+<p>Let’s focus on the physician claims. Extracting clients with at least
+two records within a year is not difficult, and involves only a few
+steps. The codes could look like the following using dplyr, however, it
+does not work because: 1. SQL does not support multiple patterns in one
+LIKE operation, 2. dbply currently have issue with translating
+n_distinct.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="do">## not run</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>claim_db <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="co"># identify the target codes</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">if_any</span>(<span class="fu">starts_with</span>(<span class="st">&quot;diagx_&quot;</span>), <span class="sc">~</span> <span class="fu">str_like</span>(., <span class="fu">c</span>(<span class="st">&quot;291%&quot;</span>, <span class="st">&quot;292%&quot;</span>, <span class="st">&quot;303%&quot;</span>, <span class="st">&quot;304%&quot;</span>, <span class="st">&quot;305%&quot;</span>)))) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="co"># each clnt has at least 2 records on different dates</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="fu">group_by</span>(clnt_id) <span class="sc">%&gt;%</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="co"># the n_distinct step is mainly for reducing computation in the next step</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n_distinct</span>(dates) <span class="sc">&gt;=</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="co"># any two dates within one year?</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="fu">filter</span>((<span class="fu">max</span>(dates) <span class="sc">-</span> <span class="fu">min</span>(dates)) <span class="sc">&lt;=</span> <span class="dv">365</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="do">## end</span></span></code></pre></div>
+<p>Here’s how you could use <code>healthdb</code> to achieve these
+steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Identify rows contains the target codes</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> claim_db <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">identify_row</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="at">vars =</span> <span class="fu">starts_with</span>(<span class="st">&quot;diagx_&quot;</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="at">match =</span> <span class="st">&quot;start&quot;</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="at">vals =</span> <span class="fu">c</span>(<span class="dv">291</span><span class="sc">:</span><span class="dv">292</span>, <span class="dv">303</span><span class="sc">:</span><span class="dv">305</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  )</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305% </span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span></code></pre></div></li>
+<li><p>Bonus: remove clients with exclusion codes</p>
+<p>This step is not in the substance use disorder definition, but other
+disease definitions often require exclusion of some ICDs that
+contradicts the ones of interest. Let’s say we want to remove clients
+with code “111” here.</p>
+<p>We first identify “111” from the source, then exclude clients in the
+output from the previous step’s result. <code>exclude()</code> take
+either a data set (via the excl argument) or expression (condition
+argument) as input. For the former, it performs an anti join matching on
+the by argument (see <code>dplyr::join_by()</code>). For the latter, it
+is the opposite of filter, i.e.,
+<code>filter(!(some_expression))</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>result2 <span class="ot">&lt;-</span> result1 <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">exclude</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="at">excl =</span> <span class="fu">identify_row</span>(claim_db, <span class="fu">starts_with</span>(<span class="st">&quot;diagx_&quot;</span>), <span class="st">&quot;in&quot;</span>, <span class="st">&quot;111&quot;</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="at">by =</span> <span class="st">&quot;clnt_id&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  )</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;    - contains a value exactly matched values in set: &quot;111&quot; </span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; Exclude records in `data` through anti_join with `excl` matching on (by argument): &quot;clnt_id&quot;</span></span></code></pre></div></li>
+<li><p>Restrict the number of records per client</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>result3 <span class="ot">&lt;-</span> result2 <span class="sc">%&gt;%</span> <span class="fu">restrict_n</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">clnt_id =</span> clnt_id,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">n_per_clnt =</span> <span class="dv">2</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">count_by =</span> dates,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="co"># here we use filter mode to remove records that failed the restriction</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;filter&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have at least 2 records with distinct dates. Clients/groups whichdid not meetthe condition were excluded.</span></span></code></pre></div></li>
+<li><p>Restrict the temporal pattern of diagnoses</p>
+<p><code>restrict_date()</code> also supports more complicated patterns
+like having n diagnoses at least i days apart within j years, but the
+“apart” feature requires relatively expensive computation and
+implemented for local data.frames only. Note that when SQL interpret
+order of dates, the result could be not deterministic if there were
+duplicate dates within client. Therefore, a unique row id colume (uid)
+has to be supplied to get consistent result.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>result4 <span class="ot">&lt;-</span> result3 <span class="sc">%&gt;%</span> <span class="fu">restrict_date</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="at">clnt_id =</span> clnt_id,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">date_var =</span> dates,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>  <span class="at">n =</span> <span class="dv">2</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  <span class="at">within =</span> <span class="dv">365</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  <span class="at">uid =</span> uid,</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="co"># here we use flag mode to flag records that met the restriction instead of removing those</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;flag&quot;</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have 2 records that were  within 365 days. Records that met the condition were flagged.</span></span></code></pre></div></li>
+<li><p>Fetch variables from other tables by matching common keys</p>
+<p>Up to this point, the result is only a query and have not been
+downloaded. Hopefully, it has been shrunken to a manageable size for
+collection.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Class of result4</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">class</span>(result4)</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;tbl_SQLiteConnection&quot; &quot;tbl_dbi&quot;              &quot;tbl_sql&quot;             </span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; [4] &quot;tbl_lazy&quot;             &quot;tbl&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co"># execute query and download the result</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>result_df <span class="ot">&lt;-</span> result4 <span class="sc">%&gt;%</span> <span class="fu">collect</span>()</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co"># Number of rows in source</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="fu">nrow</span>(claim_db <span class="sc">%&gt;%</span> <span class="fu">collect</span>())</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co">#&gt; [1] 100</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co"># Number of rows in the current result</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="fu">nrow</span>(result_df)</span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [1] 35</span></span></code></pre></div>
+<p>Our data now only contains diagnoses that are probably not enough for
+further analyses. Let’s say we want to gather client demographics such
+as age and sex from other sources. This certainly can be done with
+multiple <code>dplyr::left_join()</code> calls. Here we provide the
+<code>fetch_var()</code> function to make the codes more concise.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># make two look up tables</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>age_tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">clnt_id =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>  <span class="at">age =</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">90</span>, <span class="dv">50</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  <span class="at">sex =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">&quot;F&quot;</span>, <span class="st">&quot;M&quot;</span>), <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>address_tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="at">clnt_id =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">50</span>, <span class="dv">5</span>), <span class="at">year =</span> <span class="fu">rep</span>(<span class="dv">2016</span><span class="sc">:</span><span class="dv">2020</span>, <span class="at">each =</span> <span class="dv">50</span>),</span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="at">area_code =</span> <span class="fu">sample</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">200</span>, <span class="dv">50</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>)</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co"># get year from dates for matching</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>result_df <span class="ot">&lt;-</span> result_df <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">year =</span> lubridate<span class="sc">::</span><span class="fu">year</span>(<span class="fu">as.Date</span>(dates, <span class="at">origin =</span> <span class="st">&quot;1970-01-01&quot;</span>)))</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co"># note that keys must be present in all tables</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>result_df <span class="sc">%&gt;%</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>  <span class="fu">fetch_var</span>(</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="at">keys =</span> <span class="fu">c</span>(clnt_id, year),</span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="at">linkage =</span> <span class="fu">list</span>(</span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a>  <span class="co"># |clnt_id means matching on clnt_id only</span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a>  age_tab <span class="sc">~</span> <span class="fu">c</span>(age, sex) <span class="sc">|</span> clnt_id,</span>
+<span id="cb11-23"><a href="#cb11-23" tabindex="-1"></a>  address_tab <span class="sc">~</span> area_code</span>
+<span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a>)</span>
+<span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a>  <span class="fu">head</span>()</span>
+<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb11-28"><a href="#cb11-28" tabindex="-1"></a><span class="co">#&gt; The data has 35 rows. After joining, variable(s) from age_tab has 35 rows, and variable(s) from address_tab has 35 rows</span></span>
+<span id="cb11-29"><a href="#cb11-29" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 12</span></span>
+<span id="cb11-30"><a href="#cb11-30" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n flag_restrict_date</span></span>
+<span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;              &lt;int&gt;</span></span>
+<span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co">#&gt; 1    35       7 16810 2913  2923    999                   1                  1</span></span>
+<span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a><span class="co">#&gt; 2    22       7 16897 3056  2917    999                   1                  1</span></span>
+<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co">#&gt; 3    47       7 17096 3033  3051    3036                  1                  1</span></span>
+<span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; 4    10       7 17250 2923  3057    999                   1                  0</span></span>
+<span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; 5    41      10 16954 3033  305     2929                  1                  0</span></span>
+<span id="cb11-37"><a href="#cb11-37" tabindex="-1"></a><span class="co">#&gt; 6    44      10 17788 999   304     292                   1                  0</span></span>
+<span id="cb11-38"><a href="#cb11-38" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: year &lt;dbl&gt;, age &lt;int&gt;, sex &lt;chr&gt;, area_code &lt;int&gt;</span></span></code></pre></div></li>
+</ol>
+</div>
+<div id="call-building-functions" class="section level2">
+<h2>Call-building functions</h2>
+<p>To complete the definition, we need to repeat the process shown above
+with hospitalization data. Some studies may use more than a handful of
+data sources to define their sample. We packed steps 1-4 in one function
+<code>define_case()</code>, and provide tools to perform batch execution
+with different data and parameters to meet those needs.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># build the full definition of SUD</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>sud_def <span class="ot">&lt;-</span> <span class="fu">build_def</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>  <span class="co"># name of definition</span></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>  <span class="at">def_lab =</span> <span class="st">&quot;SUD&quot;</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  <span class="co"># place holder names for sources</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>  <span class="at">src_labs =</span> <span class="fu">c</span>(<span class="st">&quot;claim&quot;</span>, <span class="st">&quot;hosp&quot;</span>),</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>  <span class="at">def_fn =</span> define_case, <span class="co"># you could alter it and supply your own function</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>  <span class="co"># below are argumets of define_case</span></span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>  <span class="at">fn_args =</span> <span class="fu">list</span>(</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    <span class="co"># if length = 1, the single element will be use for every source</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    <span class="at">vars =</span> <span class="fu">list</span>(<span class="fu">starts_with</span>(<span class="st">&quot;diagx_&quot;</span>)),</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    <span class="at">match =</span> <span class="st">&quot;start&quot;</span>, <span class="co"># match ICD starts with vals</span></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>    <span class="at">vals =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="dv">291</span><span class="sc">:</span><span class="dv">292</span>, <span class="dv">303</span><span class="sc">:</span><span class="dv">305</span>), <span class="fu">glue</span>(<span class="st">&quot;F{10:19}&quot;</span>)),</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>    <span class="at">clnt_id =</span> clnt_id,</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>    <span class="at">n_per_clnt =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>),</span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>    <span class="at">date_var =</span> dates,</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>    <span class="at">within =</span> <span class="fu">c</span>(<span class="dv">365</span>, <span class="cn">NULL</span>),</span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>    <span class="at">uid =</span> uid,</span>
+<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>    <span class="at">mode =</span> <span class="st">&quot;flag&quot;</span></span>
+<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>  )</span>
+<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>)</span>
+<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a></span>
+<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>sud_def</span>
+<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a><span class="co">#&gt; # A tibble: 2 × 5</span></span>
+<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a><span class="co">#&gt;   def_lab src_labs def_fn      fn_args          fn_call   </span></span>
+<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;       &lt;list&gt;           &lt;list&gt;    </span></span>
+<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a><span class="co">#&gt; 1 SUD     claim    define_case &lt;named list [9]&gt; &lt;language&gt;</span></span>
+<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a><span class="co">#&gt; 2 SUD     hosp     define_case &lt;named list [9]&gt; &lt;language&gt;</span></span></code></pre></div>
+<p>Let’s look inside the fn_call list column. Two calls of
+<code>define_case()</code> have been made with different parameters. The
+data arguments are left empty on purpose for re-usability. For example,
+you may want to repeat the analysis with data from different regions or
+study periods.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>sud_def<span class="sc">$</span>fn_call</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co">#&gt; define_case(data = , vars = starts_with(&quot;diagx_&quot;), match = &quot;start&quot;, </span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt;     vals = c(291:292, 303:305), clnt_id = clnt_id, n_per_clnt = 2, </span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt;     date_var = dates, within = 365, uid = uid, mode = &quot;flag&quot;)</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co">#&gt; [[2]]</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co">#&gt; define_case(data = , vars = starts_with(&quot;diagx_&quot;), match = &quot;start&quot;, </span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt;     vals = glue(&quot;F{10:19}&quot;), clnt_id = clnt_id, n_per_clnt = 1, </span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt;     date_var = dates, within = NULL, uid = uid, mode = &quot;flag&quot;)</span></span></code></pre></div>
+<p>Executing the definition is simple. If verbose option is not turned
+off by <code>options(healthdb.verbose = FALSE)</code>, the output
+message will explain what has been done. You could append multiple
+<code>build_def()</code> outputs together and execute them all at once.
+Definition and source labels will be added to the result to identify
+outputs from different calls.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># execute the definition</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>result_list <span class="ot">&lt;-</span> sud_def <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>  <span class="fu">execute_def</span>(<span class="at">with_data =</span> <span class="fu">list</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>    <span class="at">claim =</span> claim_db,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>    <span class="at">hosp =</span> hosp_df</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  ))</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; Processing source: claim_db</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; --------------Inclusion step--------------</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305% </span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; --------------No. rows restriction--------------</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have at least 2 records with distinct dates. Clients/groups whichmetthe condition were flagged. </span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; --------------Time span restriction--------------</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have 2 records that were  within 365 days. Records that met the condition were flagged. </span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; -------------- Output all records--------------</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; Processing source: hosp_df</span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt; --------------Inclusion step--------------</span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied regular expression: ^F10|^F11|^F12|^F13|^F14|^F15|^F16|^F17|^F18|^F19 </span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; All unique value(s) and frequency in the result (as the conditions require just one of the columns containing target values; irrelevant values may come from other columns): </span></span>
+<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="co">#&gt;  999 F100 F101 F105 F109 F112 F113 F115 F116 F119 F120 F121 F122 F125 F128 F130 </span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
+<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt; F131 F132 F134 F140 F142 F144 F145 F148 F150 F157 F158 F159 F161 F162 F164 F167 </span></span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a><span class="co">#&gt; F168 F170 F171 F174 F176 F178 F180 F184 F187 F188 F191 F194 F195 F197 F198 NA&#39;s </span></span>
+<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
+<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-43"><a href="#cb14-43" tabindex="-1"></a><span class="co">#&gt; -------------- Output all records--------------</span></span></code></pre></div>
+<p>Let’s check the results!</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># view the results</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>purrr<span class="sc">::</span><span class="fu">walk</span>(result_list, <span class="sc">~</span> <span class="fu">head</span>(.) <span class="sc">%&gt;%</span> <span class="fu">print</span>())</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; # Source:     SQL [6 x 10]</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database:   sqlite 3.45.2 [:memory:]</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt; # Ordered by: dates, uid</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;   def   src     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 1 SUD   claim    24       1 17464 3048  3040    &lt;NA&gt;                  0</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 2 SUD   claim    14       2 17640 3041  3047    &lt;NA&gt;                  0</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 3 SUD   claim    37       3 16948 2913  3035    999                   0</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 4 SUD   claim    18       4 18151 305   3056    999                   0</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 5 SUD   claim    38       5 18248 3055  3054    999                   0</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; 6 SUD   claim    46       6 17273 2922  3048    2927                  0</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: flag_restrict_date &lt;int&gt;</span></span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt;   def  src uid clnt_id      dates diagx diagx_1 diagx_2</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 1 SUD hosp  43       1 2015-08-13  F156    F144    F168</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 2 SUD hosp  16       1 2017-10-25   F12    F132    &lt;NA&gt;</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 3 SUD hosp   6       2 2018-04-19  F133    F128    &lt;NA&gt;</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 4 SUD hosp  29       3 2016-05-27  F130    F164     999</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 5 SUD hosp  10       4 2019-09-12  F138    F120     999</span></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; 6 SUD hosp  30       5 2019-12-18  F192    F100     999</span></span></code></pre></div>
+<p>At this point, the result from the claim database
+(<code>result[[1]]</code>) has not been collected locally. You could
+collect it manually, do further filtering, and then combine with the
+result from hospitalization data in any way you want. If you just need a
+simple row bind, we have <code>bind_source()</code> with convenient
+naming feature.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">bind_source</span>(result_list,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="co"># output_name = c(names in the list elements)</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">src =</span> <span class="st">&quot;src&quot;</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>  <span class="at">uid =</span> <span class="st">&quot;uid&quot;</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>  <span class="at">clnt_id =</span> <span class="st">&quot;clnt_id&quot;</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="at">flag_date =</span> <span class="fu">c</span>(<span class="st">&quot;flag_restrict_date&quot;</span>, <span class="cn">NA</span>),</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="at">force_proceed =</span> <span class="cn">TRUE</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>)</span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 99 × 5</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt;    src_No src     uid clnt_id flag_date</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt;     &lt;int&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt;     &lt;int&gt;</span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;  1      1 claim    24       1         0</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt;  2      1 claim    14       2         0</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt;  3      1 claim    37       3         0</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt;  4      1 claim    18       4         0</span></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;  5      1 claim    38       5         0</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  6      1 claim    46       6         0</span></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  7      1 claim    35       7         1</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt;  8      1 claim    22       7         1</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  9      1 claim    47       7         1</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt; 10      1 claim    10       7         0</span></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#&gt; # ℹ 89 more rows</span></span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
