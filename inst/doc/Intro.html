@@ -356,7 +356,7 @@ data.frame, and some use ‘data.table’ package
 (<code>vignette(&quot;datatable-intro&quot;, package = &quot;data.table&quot;)</code>) to
 speed up processing time for large data. These functions are not as
 flexible as <code>dplyr::filter()</code>, but they are general enough to
-be useful outside health research.</p></li>
+be useful even outside health research.</p></li>
 <li><p>Call-building functions (e.g., <code>build_def()</code>,
 <code>execute_def()</code>) that facilitate batch execution and re-use
 of case definitions. In essence, <code>build_def</code> creates codes of
@@ -370,33 +370,31 @@ built-in checks signalling if things could go wrong.</p></li>
 </ul>
 <div id="motivation" class="section level3">
 <h3>Motivation</h3>
-<p>Administrative health data data are often stored on database with
-strict security measures which may disable permission to write temporary
-tables. Writing queries without being able to cache intermediate results
-is challenging, especially when the data is too large to be downloaded
-from database into R (i.e., local memory) without some filtering
-process. The lack of regular expression support in SQL makes writing
-queries for searching ICD codes even more painful.</p>
-<p>The ‘dbplyr’ package not only translates ‘dplyr’ syntax to SQL but
-also make nesting sub-queries easy with the pipe operator. With
-‘dbplyr’, complex query script can be built from nested sub-queries
-instead of writing temporary tables at a cost of performance
-(sub-queries have to be ran again and again if it was called multiple
-times). Nevertheless, building complex queries with ‘dbplyr’ is a useful
-approach to push computation onto the SQL server that is often much more
-efficient and resourceful than the user’s (virtual) machine.</p>
-<p>However, ‘dbplyr’ SQL translations failed at some places for the
-intended use case and needs fixing. The motivation of this package is to
-ease the pain from these issues for analyst who regularly works with
-healthcare database.</p>
+<p>In health research and surveillance, identifying diseases or events
+from administrative databases is often the initial step. However,
+crafting case-finding algorithms is a complex task. Existing algorithms,
+often written in SAS by experienced analysts, can be complex and
+difficult to decipher for the growing number of analysts trained
+primarily in R.</p>
+<p>These algorithms may also affect performance if they depend on Data
+Step in SAS, due to a lack of translation between Data Step and SQL.
+This can result in SAS downloading data from a remote database to a
+local machine, leading to poor performance when handling large,
+population-based databases.</p>
+<p>The ‘healthdb’ R package was created to address these challenges. It
+minimizes the need to download data and offers an easy-to-use interface
+for working with healthcare databases. It also includes capabilities not
+supported by ‘SQL’, such as matching strings by ‘stringr’ style regular
+expressions, and can compute comorbidity scores directly on a database
+server. This vignette will present an example of common use cases.</p>
 <hr />
 </div>
 </div>
 <div id="sec-installation" class="section level2">
 <h2>Installation</h2>
 <p>Simply run:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;kevinHzq/healthdb&quot;</span>, <span class="at">build_vignettes =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p>We will also need the following packages for this demo.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;healthdb&quot;</span>)</span></code></pre></div>
+<p>We will need the following packages for this demo.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; Warning: package &#39;dplyr&#39; was built under R version 4.3.2</span></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="fu">library</span>(dbplyr)</span>
@@ -433,24 +431,24 @@ diagnostic codes</p>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.45.2 [:memory:]</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2</span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1    51       1 16660 999   999     999    </span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2    24       1 17464 3048  3040    &lt;NA&gt;   </span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3    14       2 17640 3041  3047    &lt;NA&gt;   </span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 4    37       3 16948 2913  3035    999    </span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 5    91       4 16712 999   999     999    </span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 6    82       4 16760 999   999     &lt;NA&gt;</span></span></code></pre></div></li>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1    23       1 16844 3036  2922    &lt;NA&gt;   </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2     7       1 17867 3047  999     999    </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3    79       1 18440 999   999     999    </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 4    81       2 16786 999   &lt;NA&gt;    999    </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 5    18       2 18200 3059  3055    999    </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 6    44       4 16677 2919  2925    304</span></span></code></pre></div></li>
 <li><p>Hospitalization with <a href="https://en.wikipedia.org/wiki/ICD-10">ICD-10</a> codes</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>hosp_df <span class="ot">&lt;-</span> <span class="fu">make_test_dat</span>(<span class="at">vals_kept =</span> <span class="fu">c</span>(<span class="fu">glue</span>(<span class="st">&quot;F{10:19}&quot;</span>), <span class="fu">glue</span>(<span class="st">&quot;F{100:199}&quot;</span>), <span class="at">noise_val =</span> <span class="st">&quot;999&quot;</span>), <span class="at">type =</span> <span class="st">&quot;data.frame&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># this is a local data.frame/tibble</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>hosp_df <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;   uid clnt_id      dates diagx diagx_1 diagx_2</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1  43       1 2015-08-13  F156    F144    F168</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2  16       1 2017-10-25   F12    F132    &lt;NA&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3   6       2 2018-04-19  F133    F128    &lt;NA&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 4  29       3 2016-05-27  F130    F164     999</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 5  83       4 2015-10-04   999     999    &lt;NA&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 6  74       4 2015-11-21   999    &lt;NA&gt;     999</span></span></code></pre></div></li>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1  87       1 2017-10-06   999    &lt;NA&gt;    &lt;NA&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2   7       2 2016-02-24  F105    F105     999</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3  21       2 2017-05-12  F178    F154    &lt;NA&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 4  39       3 2015-07-17  F188    F167    &lt;NA&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 5  68       3 2016-11-27   999     999    &lt;NA&gt;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 6  33       4 2015-07-15  F124    F123    &lt;NA&gt;</span></span></code></pre></div></li>
 </ol>
 </div>
 <div id="interactive-functions" class="section level2">
@@ -482,13 +480,11 @@ steps:</p>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="at">match =</span> <span class="st">&quot;start&quot;</span>,</span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="at">vals =</span> <span class="fu">c</span>(<span class="dv">291</span><span class="sc">:</span><span class="dv">292</span>, <span class="dv">303</span><span class="sc">:</span><span class="dv">305</span>)</span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  )</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305% </span></span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span></code></pre></div></li>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; ℹ Identify records with condition(s):</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; • where at least one of the diagx_1, diagx_2 column(s) in each record</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; • contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305%</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; ℹ To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output.</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span></code></pre></div></li>
 <li><p>Bonus: remove clients with exclusion codes</p>
 <p>This step is not in the substance use disorder definition, but other
 disease definitions often require exclusion of some ICDs that
@@ -506,15 +502,10 @@ is the opposite of filter, i.e.,
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="at">excl =</span> <span class="fu">identify_row</span>(claim_db, <span class="fu">starts_with</span>(<span class="st">&quot;diagx_&quot;</span>), <span class="st">&quot;in&quot;</span>, <span class="st">&quot;111&quot;</span>),</span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="at">by =</span> <span class="st">&quot;clnt_id&quot;</span></span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  )</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt;    - contains a value exactly matched values in set: &quot;111&quot; </span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; Exclude records in `data` through anti_join with `excl` matching on (by argument): &quot;clnt_id&quot;</span></span></code></pre></div></li>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; ℹ Identify records with condition(s):</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; • where at least one of the diagx_1, diagx_2 column(s) in each record</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; • contains a value exactly matched values in set: &quot;111&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; ℹ Exclude records in `data` through anti_join with `excl` matching on (by argument): &quot;clnt_id&quot;</span></span></code></pre></div></li>
 <li><p>Restrict the number of records per client</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>result3 <span class="ot">&lt;-</span> result2 <span class="sc">%&gt;%</span> <span class="fu">restrict_n</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">clnt_id =</span> clnt_id,</span>
@@ -523,8 +514,8 @@ is the opposite of filter, i.e.,
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>  <span class="co"># here we use filter mode to remove records that failed the restriction</span></span>
 <span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;filter&quot;</span></span>
 <span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>)</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have at least 2 records with distinct dates. Clients/groups whichdid not meetthe condition were excluded.</span></span></code></pre></div></li>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; ℹ Apply restriction that each client must have at least 2 records with distinct</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; dates. Clients/groups which did not met the condition were excluded.</span></span></code></pre></div></li>
 <li><p>Restrict the temporal pattern of diagnoses</p>
 <p><code>restrict_date()</code> also supports more complicated patterns
 like having n diagnoses at least i days apart within j years, but the
@@ -542,8 +533,8 @@ has to be supplied to get consistent result.</p>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>  <span class="co"># here we use flag mode to flag records that met the restriction instead of removing those</span></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>  <span class="at">mode =</span> <span class="st">&quot;flag&quot;</span></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>)</span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have 2 records that were  within 365 days. Records that met the condition were flagged.</span></span></code></pre></div></li>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; ℹ Apply restriction that each client must have 2 records that were within 365</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; days. Records that met the condition were flagged.</span></span></code></pre></div></li>
 <li><p>Fetch variables from other tables by matching common keys</p>
 <p>Up to this point, the result is only a query and have not been
 downloaded. Hopefully, it has been shrunken to a manageable size for
@@ -562,7 +553,7 @@ collection.</p>
 <span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co"># Number of rows in the current result</span></span>
 <span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="fu">nrow</span>(result_df)</span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [1] 35</span></span></code></pre></div>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [1] 25</span></span></code></pre></div>
 <p>Our data now only contains diagnoses that are probably not enough for
 further analyses. Let’s say we want to gather client demographics such
 as age and sex from other sources. This certainly can be done with
@@ -594,18 +585,16 @@ multiple <code>dplyr::left_join()</code> calls. Here we provide the
 <span id="cb11-24"><a href="#cb11-24" tabindex="-1"></a>)</span>
 <span id="cb11-25"><a href="#cb11-25" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb11-26"><a href="#cb11-26" tabindex="-1"></a>  <span class="fu">head</span>()</span>
-<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb11-28"><a href="#cb11-28" tabindex="-1"></a><span class="co">#&gt; The data has 35 rows. After joining, variable(s) from age_tab has 35 rows, and variable(s) from address_tab has 35 rows</span></span>
-<span id="cb11-29"><a href="#cb11-29" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 12</span></span>
-<span id="cb11-30"><a href="#cb11-30" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n flag_restrict_date</span></span>
-<span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;              &lt;int&gt;</span></span>
-<span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co">#&gt; 1    35       7 16810 2913  2923    999                   1                  1</span></span>
-<span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a><span class="co">#&gt; 2    22       7 16897 3056  2917    999                   1                  1</span></span>
-<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co">#&gt; 3    47       7 17096 3033  3051    3036                  1                  1</span></span>
-<span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; 4    10       7 17250 2923  3057    999                   1                  0</span></span>
-<span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; 5    41      10 16954 3033  305     2929                  1                  0</span></span>
-<span id="cb11-37"><a href="#cb11-37" tabindex="-1"></a><span class="co">#&gt; 6    44      10 17788 999   304     292                   1                  0</span></span>
-<span id="cb11-38"><a href="#cb11-38" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: year &lt;dbl&gt;, age &lt;int&gt;, sex &lt;chr&gt;, area_code &lt;int&gt;</span></span></code></pre></div></li>
+<span id="cb11-27"><a href="#cb11-27" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 12</span></span>
+<span id="cb11-28"><a href="#cb11-28" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n flag_restrict_date</span></span>
+<span id="cb11-29"><a href="#cb11-29" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;              &lt;int&gt;</span></span>
+<span id="cb11-30"><a href="#cb11-30" tabindex="-1"></a><span class="co">#&gt; 1    16       6 16766 3036  3036    &lt;NA&gt;                  1                  1</span></span>
+<span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="co">#&gt; 2     4       6 17010 291   3039    &lt;NA&gt;                  1                  0</span></span>
+<span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co">#&gt; 3    26       9 17051 3033  3038    &lt;NA&gt;                  1                  0</span></span>
+<span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a><span class="co">#&gt; 4     1       9 17462 2921  3030    999                   1                  0</span></span>
+<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co">#&gt; 5    21      11 16994 2925  2928    &lt;NA&gt;                  1                  0</span></span>
+<span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; 6    39      11 18301 3053  3050    &lt;NA&gt;                  1                  0</span></span>
+<span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: year &lt;dbl&gt;, age &lt;int&gt;, sex &lt;chr&gt;, area_code &lt;int&gt;</span></span></code></pre></div></li>
 </ol>
 </div>
 <div id="call-building-functions" class="section level2">
@@ -672,41 +661,33 @@ outputs from different calls.</p>
 <span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  ))</span>
 <span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co">#&gt; Processing source: claim_db</span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; --------------Inclusion step--------------</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305% </span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="co">#&gt; → --------------Inclusion step--------------</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="co">#&gt; ℹ Identify records with condition(s):</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co">#&gt; • where at least one of the diagx_1, diagx_2 column(s) in each record</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="co">#&gt; • contains a value satisfied SQL LIKE pattern: 291% OR 292% OR 303% OR 304% OR 305%</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="co">#&gt; → --------------No. rows restriction--------------</span></span>
 <span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; To see the final query generated by &#39;dbplyr&#39;, use dplyr::show_query() on the output. </span></span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; To extract the SQL string, use dbplyr::remote_query().</span></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co">#&gt; ℹ Apply restriction that each client must have at least 2 records with distinct dates. Records that met the condition were flagged.</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a><span class="co">#&gt; → --------------Time span restriction--------------</span></span>
 <span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; --------------No. rows restriction--------------</span></span>
-<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have at least 2 records with distinct dates. Clients/groups whichmetthe condition were flagged. </span></span>
-<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; --------------Time span restriction--------------</span></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co">#&gt; ℹ Apply restriction that each client must have 2 records that were within 365 days. Records that met the condition were flagged.</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a><span class="co">#&gt; → -------------- Output all records--------------</span></span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a><span class="co">#&gt; Processing source: hosp_df</span></span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a><span class="co">#&gt; → --------------Inclusion step--------------</span></span>
 <span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; Apply restriction that each client must have 2 records that were  within 365 days. Records that met the condition were flagged. </span></span>
-<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; -------------- Output all records--------------</span></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co">#&gt; ℹ Identify records with condition(s):</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co">#&gt; • where at least one of the diagx_1, diagx_2 column(s) in each record</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co">#&gt; • contains a value satisfied regular expression: ^F10|^F11|^F12|^F13|^F14|^F15|^F16|^F17|^F18|^F19</span></span>
 <span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; Processing source: hosp_df</span></span>
-<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt; --------------Inclusion step--------------</span></span>
-<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt; Identify records with condition(s): </span></span>
-<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt;  - where at least one of the diagx_1, diagx_2 column(s) in each record </span></span>
-<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt;    - contains a value satisfied regular expression: ^F10|^F11|^F12|^F13|^F14|^F15|^F16|^F17|^F18|^F19 </span></span>
-<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; All unique value(s) and frequency in the result (as the conditions require just one of the columns containing target values; irrelevant values may come from other columns): </span></span>
-<span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="co">#&gt;  999 F100 F101 F105 F109 F112 F113 F115 F116 F119 F120 F121 F122 F125 F128 F130 </span></span>
-<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt; F131 F132 F134 F140 F142 F144 F145 F148 F150 F157 F158 F159 F161 F162 F164 F167 </span></span>
-<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a><span class="co">#&gt; F168 F170 F171 F174 F176 F178 F180 F184 F187 F188 F191 F194 F195 F197 F198 NA&#39;s </span></span>
-<span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-42"><a href="#cb14-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb14-43"><a href="#cb14-43" tabindex="-1"></a><span class="co">#&gt; -------------- Output all records--------------</span></span></code></pre></div>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; All unique value(s) and frequency in the result (as the conditions require just one of the columns containing target values; irrelevant values may come from other vars columns): </span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt;  999 F103 F104 F105 F106 F111 F112 F114 F115 F118  F12 F120 F122 F123 F124  F13 </span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt; F131 F134 F135 F138 F139 F140 F142 F144 F154 F162 F163 F167 F168 F169 F172 F174 </span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; F177 F180 F185 F186 F188 F189  F19 F191 F192 F194 F196 F198 NA&#39;s </span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1</span></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; → -------------- Output all records--------------</span></span></code></pre></div>
 <p>Let’s check the results!</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># view the results</span></span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>purrr<span class="sc">::</span><span class="fu">walk</span>(result_list, <span class="sc">~</span> <span class="fu">head</span>(.) <span class="sc">%&gt;%</span> <span class="fu">print</span>())</span>
@@ -715,20 +696,20 @@ outputs from different calls.</p>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt; # Ordered by: dates, uid</span></span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;   def   src     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n</span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 1 SUD   claim    24       1 17464 3048  3040    &lt;NA&gt;                  0</span></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 2 SUD   claim    14       2 17640 3041  3047    &lt;NA&gt;                  0</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 3 SUD   claim    37       3 16948 2913  3035    999                   0</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 4 SUD   claim    18       4 18151 305   3056    999                   0</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 5 SUD   claim    38       5 18248 3055  3054    999                   0</span></span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; 6 SUD   claim    46       6 17273 2922  3048    2927                  0</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 1 SUD   claim    23       1 16844 3036  2922    &lt;NA&gt;                  0</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 2 SUD   claim    18       2 18200 3059  3055    999                   0</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 3 SUD   claim    44       4 16677 2919  2925    304                   0</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 4 SUD   claim     9       5 17135 111   3034    999                   0</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 5 SUD   claim    16       6 16766 3036  3036    &lt;NA&gt;                  1</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; 6 SUD   claim     4       6 17010 291   3039    &lt;NA&gt;                  1</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: flag_restrict_date &lt;int&gt;</span></span>
 <span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt;   def  src uid clnt_id      dates diagx diagx_1 diagx_2</span></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 1 SUD hosp  43       1 2015-08-13  F156    F144    F168</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 2 SUD hosp  16       1 2017-10-25   F12    F132    &lt;NA&gt;</span></span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 3 SUD hosp   6       2 2018-04-19  F133    F128    &lt;NA&gt;</span></span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 4 SUD hosp  29       3 2016-05-27  F130    F164     999</span></span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 5 SUD hosp  10       4 2019-09-12  F138    F120     999</span></span>
-<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; 6 SUD hosp  30       5 2019-12-18  F192    F100     999</span></span></code></pre></div>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 1 SUD hosp   7       2 2016-02-24  F105    F105     999</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 2 SUD hosp  21       2 2017-05-12  F178    F154    &lt;NA&gt;</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 3 SUD hosp  39       3 2015-07-17  F188    F167    &lt;NA&gt;</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 4 SUD hosp  33       4 2015-07-15  F124    F123    &lt;NA&gt;</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 5 SUD hosp  15       4 2015-09-20  F196    F115     999</span></span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="co">#&gt; 6 SUD hosp  47       5 2015-08-25  F173    F186    F196</span></span></code></pre></div>
 <p>At this point, the result from the claim database
 (<code>result[[1]]</code>) has not been collected locally. You could
 collect it manually, do further filtering, and then combine with the
@@ -743,20 +724,20 @@ naming feature.</p>
 <span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="at">flag_date =</span> <span class="fu">c</span>(<span class="st">&quot;flag_restrict_date&quot;</span>, <span class="cn">NA</span>),</span>
 <span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="at">force_proceed =</span> <span class="cn">TRUE</span></span>
 <span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>)</span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 99 × 5</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; # A tibble: 97 × 5</span></span>
 <span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt;    src_No src     uid clnt_id flag_date</span></span>
 <span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt;     &lt;int&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt;     &lt;int&gt;</span></span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;  1      1 claim    24       1         0</span></span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt;  2      1 claim    14       2         0</span></span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt;  3      1 claim    37       3         0</span></span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt;  4      1 claim    18       4         0</span></span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;  5      1 claim    38       5         0</span></span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  6      1 claim    46       6         0</span></span>
-<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  7      1 claim    35       7         1</span></span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt;  8      1 claim    22       7         1</span></span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  9      1 claim    47       7         1</span></span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt; 10      1 claim    10       7         0</span></span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#&gt; # ℹ 89 more rows</span></span></code></pre></div>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;  1      1 claim    23       1         0</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt;  2      1 claim    18       2         0</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt;  3      1 claim    44       4         0</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt;  4      1 claim     9       5         0</span></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;  5      1 claim    16       6         1</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  6      1 claim     4       6         0</span></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  7      1 claim    14       8         0</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt;  8      1 claim    26       9         0</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  9      1 claim     1       9         0</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt; 10      1 claim     6      10         0</span></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#&gt; # ℹ 87 more rows</span></span></code></pre></div>
 </div>
 
 

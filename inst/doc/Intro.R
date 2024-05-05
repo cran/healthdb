@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  devtools::install_github("kevinHzq/healthdb", build_vignettes = TRUE)
+#  install.packages("healthdb")
 
 ## ----setup, message=FALSE-----------------------------------------------------
 library(dplyr)

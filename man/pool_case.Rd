@@ -33,26 +33,15 @@ pool_case(
 \item{...}{Additional arguments passing to \code{\link[=bind_source]{bind_source()}}}
 }
 \value{
-A data.frame or remote table with clients that satisfied the predefined case definition.
+A data.frame or remote table with clients that satisfied the predefined case definition. Columns started with "raw_in_" are source-specific counts of raw records, and columns started with "valid_in_" are the number of valid entries (or the number of flags) in each source.
 }
 \description{
 This function filters and pools, i.e., row bind, qualified clients/groups from different source with an option to summarize by client. Unlike \code{\link[=bind_source]{bind_source()}}, no need to supply variable names; the function will guess what should be included and their names from the supplied definition from \code{\link[=build_def]{build_def()}}. Whether a client is qualified relies on the flag variables set by \code{\link[=define_case]{define_case()}}. Therefore, this function is intended to be use only with the built-in \code{\link[=define_case]{define_case()}} as \code{def_fn} in \code{\link[=build_def]{build_def()}}.
 }
 \examples{
 # toy data
-sample_size <- 30
-df <- data.frame(
-  clnt_id = rep(1:3, each = 10),
-  service_dt = sample(seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 1),
-    size = sample_size, replace = TRUE
-  ),
-  diagx = sample(letters, size = sample_size, replace = TRUE),
-  diagx_1 = sample(c(NA, letters), size = sample_size, replace = TRUE),
-  diagx_2 = sample(c(NA, letters), size = sample_size, replace = TRUE)
-)
-
-# make df a database table
-db <- dbplyr::tbl_memdb(df)
+df1 <- make_test_dat()
+df2 <- make_test_dat()
 
 # use build_def to make a toy definition
 sud_def <- build_def("SUD", # usually a disease name
@@ -74,8 +63,8 @@ sud_def <- build_def("SUD", # usually a disease name
 # saveRDS(sud_def, file = some_path)
 
 # execute definition
-sud_by_src <- sud_def \%>\% execute_def(with_data = list(src1 = db, src2 = db))
+sud_by_src <- sud_def \%>\% execute_def(with_data = list(src1 = df1, src2 = df2))
 
 # pool results from src1 and src2 together at client level
-sud_pooled <- pool_case(sud_by_src, sud_def, output_lvl = "clnt")
+pool_case(sud_by_src, sud_def, output_lvl = "clnt")
 }

@@ -8,9 +8,9 @@
 #' @param n An integer for the size of a draw
 #' @param apart An integer specifying the minimum gap (in days) between adjacent dates in a draw.
 #' @param within An integer specifying the maximum time span (in days) of a draw.
-#' @param detail Logical for whether return result per element of x.The default is FALSE, which returns one logical summarized by any().
+#' @param detail Logical for whether return result per element of x.The default is FALSE, which returns one logical summarized by any(). Detail is not available if `apart` was supplied without `within` because sets that satisfied the condition could overlap, and records within a set may be far apart; thus, no unambiguous way to label by element.
 #' @param align Character, define if the time span for each record should start ("left") or end ("right") at its current date. Defaults to "left". See 'flag_at' argument in [restrict_date()] for detail.
-#' @param dup.rm Logical for whether duplicated dates in x should be removed before calculation. Default is TRUE.
+#' @param dup.rm Logical for whether multiple records on the same date should be count as one in calculation. Only applicable when `within` is supplied without `apart`; duplicated dates have no impact when `apart` is present as the n dates must be distinct if they were apart. Default is TRUE.
 #' @param ... Additional argument passing to [data.table::as.IDate()] for date conversion.
 #' @seealso [restrict_date()]
 #'
@@ -30,13 +30,11 @@ if_date <- function(x, n, apart = NULL, within = NULL, detail = FALSE, align = c
   if (all(is.null(apart), is.null(within))) stop("apart and within cannot both be NULL")
 
   # stopifnot("x must be character or Date" = any(is.character(x), lubridate::is.Date(x)))
-  stopifnot(is.wholenumber(n))
+  stopifnot(n > 1, is.wholenumber(n))
   align <- rlang::arg_match0(align, c("left", "right"))
 
   # place holder for var names
-  N <- len_enough <- period_id <- real_end <- start <- y <- NULL
-
-  if (dup.rm) x <- unique(x)
+  N <- len_enough <- period_id <- real_end <- start <- d <- y <- NULL
 
   len <- length(x)
 
@@ -45,7 +43,10 @@ if_date <- function(x, n, apart = NULL, within = NULL, detail = FALSE, align = c
   }
 
   x <- data.table::as.IDate(x, ...)
-  x <- sort(x)
+  # for sorting result back to the order corresponding to the original x
+  # https://stackoverflow.com/questions/15464793/restoring-original-order-of-a-vector-matrix-in-r
+  ord <- order(x)
+  x <- x[ord]
 
   # just interpret apart if no within. see all_part.R for detail
   if (is.null(within)) {
@@ -57,17 +58,28 @@ if_date <- function(x, n, apart = NULL, within = NULL, detail = FALSE, align = c
     # if just within, the adjacent n has the smallest gaps, if none of the rolling window < within, no other combinations will be so.
     stopifnot(is.wholenumber(within))
 
+    if (dup.rm) {
+      x0 <- x
+      x <- unique(x)
+    }
+
     x_roll <- data.table::frollapply(x = x, n = n, align = align, FUN = function(x) sum(diff(x)) <= within)
     dtx <- data.table::data.table(x = as.numeric(x_roll == 1))
-
-    # switch (align,
-    #   left = data.table::setnafill(dtx, "locf"),
-    #   right = data.table::setnafill(dtx, fill = 0)
-    # )
     data.table::setnafill(dtx, fill = 0)
 
     if (detail) {
-      return(as.logical(dtx[, x]))
+      if (dup.rm) {
+        # fill detail vector when there are duplicates
+        x_roll <- dtx[, x]
+        for (i in x0[duplicated(x0)]) {
+          x_roll <- append(x_roll, NA, which(x == i))
+          x <- append(x, NA, which(x == i))
+        }
+        x_roll <- data.table::nafill(x_roll, type = "locf")
+        return(as.logical(x_roll)[order(ord)])
+      } else {
+        return(as.logical(dtx[, x])[order(ord)])
+      }
     } else {
       return(any(as.logical(dtx[, x]), na.rm = TRUE))
     }
@@ -76,33 +88,42 @@ if_date <- function(x, n, apart = NULL, within = NULL, detail = FALSE, align = c
     if (apart * (n - 1) >= within) stop("Condition is impossible as apart*(n - 1) cannot be greater than within")
     # overlap join dates and dates+within to get records falls in every within window starting at each date. This ensure the within condition, then calls all_apart to test the apart condition
     # tested against combn(sample, n, function(x) all(diff(sort(x)) >= m) & (diff(c(min(x), max(x))) <= within)) %>% any()
-    dtx <- data.table::data.table(x = x, y = x, key = c("x", "y"))
+    # browser()
+    dtx <- data.table::data.table(d = x, y = x, key = c("d", "y"))
 
-    switch (align,
-      left = {dty <- data.table::data.table(start = x, end = x + within, period_id = seq(1:len), key = c("start", "end"))},
-      right = {dty <- data.table::data.table(start = x - within, end = x, period_id = seq(1:len), key = c("start", "end"))}
+    switch(align,
+      left = {
+        dty <- data.table::data.table(start = x, end = x + within, period_id = seq(1:len), key = c("start", "end"))
+      },
+      right = {
+        dty <- data.table::data.table(start = x - within, end = x, period_id = seq(1:len), key = c("start", "end"))
+      }
     )
 
     overlap <- data.table::foverlaps(dtx, dty)[, y := NULL]
-    data.table::setorder(overlap, period_id, x)
-    overlap[, N := .N, by = period_id]
-    # filters with if (!start_valid) is used for reducing compute
-    if (!detail) overlap <- overlap[N >= n]
-    overlap[, real_end := data.table::last(x), by = period_id]
-    if (!detail) overlap <- overlap[, len_enough := (real_end - start) >= apart * (n - 1)][len_enough == TRUE]
-    if (nrow(overlap) == 0) {
-      return(FALSE)
-    }
+    # browser()
+    data.table::setorder(overlap, period_id, d)
 
-    overlap <- overlap[, list(incl = all_apart(x, n, apart)), by = period_id]
+    # filters with n for reducing compute
+    if (!detail) {
+      overlap[, N := .N, by = period_id]
+      overlap <- overlap[N >= n]
+      if (nrow(overlap) == 0) {
+        return(FALSE)
+      }
+    }
+    # intended to reduce compute but need to adjust for `align`
+    # overlap[, real_end := data.table::last(d), by = period_id]
+    # if (!detail) overlap <- overlap[, len_enough := (real_end - start) >= apart * (n - 1)][len_enough == TRUE]
+
+    overlap <- overlap[, list(incl = all_apart(d, n, apart)), by = period_id]
 
     if (detail) {
-      return(overlap[["incl"]])
+      return(overlap[["incl"]][order(ord)])
     } else {
       return(any(overlap[["incl"]], na.rm = TRUE))
     }
   }
 }
 
-#' @aliases if_date
 if_dates <- if_date

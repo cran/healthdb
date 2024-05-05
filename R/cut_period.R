@@ -20,22 +20,39 @@
 #' # divide period into segments (multiple rows per period)
 #' df_seg <- cut_period(
 #'   data = df, start = start_date, end = end_date,
-#'   len = 30, .dt_trans = lubridate::ymd
+#'   len = 1,
+#'   unit = "year",
+#'   .dt_trans = lubridate::ymd
 #' )
 #'
 #' # categorize segment_id as factor
 #' df_seg$segment <- cut(df_seg$segment_id,
 #'   breaks = c(0, 1, 2, Inf),
-#'   labels = c("< 1 month", "1 - 2 months", "Remainder")
+#'   labels = c("< 1 year", "1 - 2 years", "Remainder")
 #' )
+#'
+#' head(df_seg)
 cut_period <- function(data, start, end, len, unit = c("day", "week", "month", "quarter", "year"), .dt_trans = NULL) {
   # input checks
   stopifnot(is.data.frame(data))
 
   err <- data %>%
-    dplyr::filter({{ start }} > {{ end }}) %>%
-    nrow()
-  if (err > 0) stop("Some start date is later than end date.")
+    dplyr::filter(dplyr::if_any(c({{ start }}, {{ end }}), is.na))
+
+  if (nrow(err) > 0) {
+    cat("\nThe following records have missing dates:\n")
+    print(err)
+    stop("Some start or end dates are missing.")
+  }
+
+  err <- data %>%
+    dplyr::filter({{ start }} > {{ end }})
+
+  if (nrow(err) > 0) {
+    cat("\nThe following records have start > end:\n")
+    print(err)
+    stop("Some start > end.")
+  }
 
   unit <- rlang::arg_match0(unit, c("day", "week", "month", "quarter", "year"))
 
@@ -49,7 +66,7 @@ cut_period <- function(data, start, end, len, unit = c("day", "week", "month", "
   data %>%
     dplyr::mutate(
       segment_start = purrr::map2({{ start }}, {{ end }}, ~ seq(.x, .y, by = paste(len, unit))),
-      segment_end = purrr::map2(.data$segment_start, {{ end }}, ~ .x %>% dplyr::lead(, default = .y + lubridate::days(1)) - lubridate::days(1)),
+      segment_end = purrr::map2(.data$segment_start, {{ end }}, ~ .x %>% dplyr::lead(, default = .y %m+% lubridate::days(1)) %m-% lubridate::days(1)),
       segment_id = purrr::map(.data$segment_start, ~ seq_along(lengths(.x)))
     ) %>%
     tidyr::unnest(cols = dplyr::any_of(new_cols))

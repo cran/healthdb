@@ -4,7 +4,7 @@ test_that("match by in works", {
   out_df <- identify_rows(db, starts_with("diagx"), "in", letters, query_only = FALSE)
   expect_equal(out_df, subset(df, ans %in% c("all", "any")), ignore_attr = "row.names")
   # also test cat output
-  expect_output(identify_rows(db, starts_with("diagx"), "in", letters, verbose = TRUE))
+  expect_message(identify_rows(db, starts_with("diagx"), "in", letters, verbose = TRUE))
 })
 
 test_that("if_all works", {
@@ -38,6 +38,8 @@ test_that("match by regex works", {
   df <- dplyr::collect(db)
   out_df <- identify_rows(db, starts_with("diagx"), "regex", pattern, query_only = FALSE)
   expect_equal(out_df, subset(df, ans %in% c("all", "any")), ignore_attr = "row.names")
+  # also test one var works for pivot
+  expect_no_error(identify_rows(db, diagx, "regex", pattern, query_only = FALSE))
 })
 
 test_that("match by between works", {

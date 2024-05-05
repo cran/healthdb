@@ -9,6 +9,7 @@ test_that("basic use works", {
   # also test mode
   output_df <- restrict_dates(df, clnt_id, dates, n, apart, within) %>% dplyr::filter(flag_restrict_date == 1)
   expect_setequal(output_df$clnt_id, ans_id)
+  expect_message(restrict_dates(df, clnt_id, dates, n, apart, within, mode = "filter", verbose = TRUE), "excluded")
 })
 
 test_that("edge case - var in external vector works", {
@@ -36,3 +37,12 @@ test_that("flag_at works", {
   expect_equal(output_df$dates, x)
   expect_setequal(output_df$dates[output_df$flag_restrict_date == 1], x[ans_right])
 })
+
+test_that("check missing dates works", {
+  n <- sample(2:5, 1)
+  within <- sample(30:365, 1)
+  df <- make_test_dat()
+  df$dates[sample(1:nrow(df), 5)] <- NA
+  expect_warning(restrict_dates(df, clnt_id, dates, n, within = within, uid = uid), "Removed 5 records")
+})
+

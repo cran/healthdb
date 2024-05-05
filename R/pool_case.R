@@ -15,24 +15,13 @@
 #' * "n_per_clnt" - for each client, if they had fewer than `n_per_clnt` records in a source (see [restrict_n()]), then records from that source are removed.
 #' @param ... Additional arguments passing to [bind_source()]
 #'
-#' @return A data.frame or remote table with clients that satisfied the predefined case definition.
+#' @return A data.frame or remote table with clients that satisfied the predefined case definition. Columns started with "raw_in_" are source-specific counts of raw records, and columns started with "valid_in_" are the number of valid entries (or the number of flags) in each source.
 #' @export
 #'
 #' @examples
 #' # toy data
-#' sample_size <- 30
-#' df <- data.frame(
-#'   clnt_id = rep(1:3, each = 10),
-#'   service_dt = sample(seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 1),
-#'     size = sample_size, replace = TRUE
-#'   ),
-#'   diagx = sample(letters, size = sample_size, replace = TRUE),
-#'   diagx_1 = sample(c(NA, letters), size = sample_size, replace = TRUE),
-#'   diagx_2 = sample(c(NA, letters), size = sample_size, replace = TRUE)
-#' )
-#'
-#' # make df a database table
-#' db <- dbplyr::tbl_memdb(df)
+#' df1 <- make_test_dat()
+#' df2 <- make_test_dat()
 #'
 #' # use build_def to make a toy definition
 #' sud_def <- build_def("SUD", # usually a disease name
@@ -54,10 +43,10 @@
 #' # saveRDS(sud_def, file = some_path)
 #'
 #' # execute definition
-#' sud_by_src <- sud_def %>% execute_def(with_data = list(src1 = db, src2 = db))
+#' sud_by_src <- sud_def %>% execute_def(with_data = list(src1 = df1, src2 = df2))
 #'
 #' # pool results from src1 and src2 together at client level
-#' sud_pooled <- pool_case(sud_by_src, sud_def, output_lvl = "clnt")
+#' pool_case(sud_by_src, sud_def, output_lvl = "clnt")
 pool_case <- function(data, def, output_lvl = c("raw", "clnt"), include_src = c("all", "has_valid", "n_per_clnt"), ...) {
   . <- clnt_id <- date_var <- flag_restrict_date <- flag_restrict_n <- flag_valid_record <- src <- max_date <- NULL
 
@@ -127,6 +116,8 @@ pool_case <- function(data, def, output_lvl = c("raw", "clnt"), include_src = c(
                                                              .default = flag_restrict_n)) %>%
           dplyr::filter(flag_restrict_n > 0L) %>%
           dplyr::group_by(def, clnt_id)
+      } else {
+        stop("Input data does not contain flag_restrict_n")
       }
     }
   )
@@ -166,8 +157,6 @@ pool_case <- function(data, def, output_lvl = c("raw", "clnt"), include_src = c(
     bind_data <- bind_data %>%
       dplyr::mutate(max_date = max(date_var, na.rm = TRUE))
   }
-  bind_data <- bind_data %>%
-    dplyr::filter(flag_valid_record == 1)
 
   # getting source indicators
   src_nm <- unique(def[["src_labs"]])
@@ -185,19 +174,28 @@ pool_case <- function(data, def, output_lvl = c("raw", "clnt"), include_src = c(
       dplyr::arrange(dplyr::pick(dplyr::any_of(order_raw)))
   }
 
+  # preserve raw record count before filter out valid records
+  bind_data <- bind_data %>%
+    dplyr::mutate(dplyr::across(dplyr::starts_with("in_"), ~ sum(as.integer(.), na.rm = TRUE), .names = "raw_{.col}"))
+
+  bind_data <- bind_data %>%
+    dplyr::filter(flag_valid_record == 1)
+
   switch(has_date_var,
          y = {
            bind_data <- bind_data %>%
              dplyr::summarise(
                first_valid_date = min(date_var, na.rm = TRUE),
                last_entry_date = max(max_date, na.rm = TRUE),
-               dplyr::across(dplyr::starts_with("in_"), ~ sum(as.integer(.), na.rm = TRUE))
+               dplyr::across(dplyr::starts_with("raw_"), ~ mean(., na.rm = TRUE)),
+               dplyr::across(dplyr::starts_with("in_"), ~ sum(as.integer(.), na.rm = TRUE), .names = "valid_{.col}")
              )
          },
          n = {
            bind_data <- bind_data %>%
              dplyr::summarise(
-               dplyr::across(dplyr::starts_with("in_"), ~ sum(as.integer(.), na.rm = TRUE))
+               dplyr::across(dplyr::starts_with("raw_"), ~ mean(., na.rm = TRUE)),
+               dplyr::across(dplyr::starts_with("in_"), ~ sum(as.integer(.), na.rm = TRUE), .names = "valid_{.col}")
              )
          }
   )

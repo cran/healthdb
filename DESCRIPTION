@@ -1,7 +1,7 @@
 Package: healthdb
 Type: Package
-Title: Working with Healthcare Database
-Version: 0.1.0
+Title: Working with Healthcare Databases
+Version: 0.2.0
 Authors@R: person("Kevin", "Hu",
     email = "kevin.hu@bccdc.ca",
     role = c("aut", "cre", "cph"),
@@ -14,8 +14,8 @@ Description: A system for identifying diseases or events from healthcare databas
     implementation is based on 'dbplyr' with full 'tidyverse' compatibility.
 License: MIT + file LICENSE
 Encoding: UTF-8
-Imports: data.table, dbplyr, dplyr (>= 1.1.0), glue, lubridate,
-        magrittr, purrr, rlang, stringr, tidyr
+Imports: clock, data.table, dbplyr (>= 2.5.0), dplyr (>= 1.1.0), glue,
+        lubridate, magrittr, purrr, rlang, stringr (>= 1.5.0), tidyr
 RoxygenNote: 7.3.1
 URL: https://github.com/KevinHzq/healthdb,
         https://kevinhzq.github.io/healthdb/
@@ -24,8 +24,8 @@ Suggests: knitr, rmarkdown, testthat (>= 3.0.0), withr, RSQLite
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-04-25 18:50:49 UTC; kevin.hu
+Packaged: 2024-05-05 21:09:38 UTC; kevin.hu
 Author: Kevin Hu [aut, cre, cph] (<https://orcid.org/0000-0003-0254-5277>)
 Maintainer: Kevin Hu <kevin.hu@bccdc.ca>
 Repository: CRAN
-Date/Publication: 2024-04-27 18:10:08 UTC
+Date/Publication: 2024-05-05 21:20:02 UTC

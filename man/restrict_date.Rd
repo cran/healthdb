@@ -21,7 +21,7 @@ restrict_date(
 )
 }
 \arguments{
-\item{data}{Data frames or remote tables (e.g., from \verb{vignette("dbplyr", package = "dbplyr)})}
+\item{data}{Data frames or remote tables (e.g., from \code{\link[dbplyr:tbl_sql]{dbplyr::tbl_sql()}})}
 
 \item{clnt_id}{Grouping variable (quoted/unquoted).}
 
@@ -29,7 +29,7 @@ restrict_date(
 
 \item{n}{An integer for the size of a draw.}
 
-\item{apart}{An integer specifying the minimum gap (in days) between adjacent dates in a draw. This option is only implemented for data.frame input.}
+\item{apart}{An integer specifying the minimum gap (in days) between adjacent dates in a draw.}
 
 \item{within}{An integer specifying the maximum time span (in days) of a draw.}
 
@@ -43,7 +43,7 @@ restrict_date(
 
 \item{flag_at}{Character, define if the flag should be placed at the start ("left") or end ("right") of a time period that contains n qualified records. Defaults to "left". Note that this would impact the first and last qualified/diagnosed dates of a client, e.g., using "right" will have the first flag not at the earliest but the date which the client became qualified. For example, if the condition was 2 records within a year, for \code{c("2023-01-01", "2023-04-01", "2024-05-01")}, flag will be \code{c(0, 1, 0)} for "right" while \code{c(1,0,0)} for "left".}
 
-\item{dup.rm}{Logical for whether duplicated dates should be removed before calculation. Default is TRUE.}
+\item{dup.rm}{Logical for whether multiple records on the same date should be count as one in calculation. Only applicable when \code{within} is supplied without \code{apart}; duplicated dates have no impact when \code{apart} is present as the n dates must be distinct if they were apart. Default is TRUE.}
 
 \item{force_collect}{A logical for whether force downloading remote table if \code{apart} is not NULL. For remote table only, because \code{apart} is implemented for local data frame only. Downloading data could be slow, so the user has to opt in; default FALSE will stop with error.}
 
@@ -59,14 +59,17 @@ For each client or group, interpret if they have n records that are at least cer
 }
 \examples{
 sample_size <- 30
-df <- data.frame(clnt_id = sample(1:sample_size, sample_size, replace = TRUE),
- service_dt = sample(seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 1),
-                     size = sample_size, replace = TRUE),
- diagx = sample(letters, size = sample_size, replace = TRUE),
- diagx_1 = sample(c(NA, letters), size = sample_size, replace = TRUE),
- diagx_2 = sample(c(NA, letters), size = sample_size, replace = TRUE))
+df <- data.frame(
+  clnt_id = sample(1:sample_size, sample_size, replace = TRUE),
+  service_dt = sample(seq(as.Date("2020-01-01"), as.Date("2020-01-31"), by = 1),
+    size = sample_size, replace = TRUE
+  ),
+  diagx = sample(letters, size = sample_size, replace = TRUE),
+  diagx_1 = sample(c(NA, letters), size = sample_size, replace = TRUE),
+  diagx_2 = sample(c(NA, letters), size = sample_size, replace = TRUE)
+)
 
-#Keep clients with 2 records that were 1 week apart within 1 month
+# Keep clients with 2 records that were 1 week apart within 1 month
 restrict_date(df, clnt_id, service_dt, n = 2, apart = 7, within = 30)
 }
 \seealso{

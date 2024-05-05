@@ -15,7 +15,7 @@ exclude(
 )
 }
 \arguments{
-\item{data}{Data.frames or remote tables (e.g., from \verb{vignette("dbplyr", package = "dbplyr)}). A subset will be removed from this data.}
+\item{data}{Data.frames or remote tables (e.g., from \code{\link[dbplyr:tbl_sql]{dbplyr::tbl_sql()}}). A subset will be removed from this data.}
 
 \item{excl}{Data frames or remote tables (e.g., from 'dbplyr'). Rows/values present in it will be removed from \code{data} if there is a match. This will be passed to \code{\link[dplyr:filter-joins]{dplyr::anti_join()}} as the second argument.}
 
@@ -37,8 +37,8 @@ This function combines \code{\link[dplyr:filter-joins]{dplyr::anti_join()}}, and
 }
 \examples{
 # exclude with condition
-cyl4 <- exclude(mtcars, condition = cyl == 4, report_on = cyl)
+cyl_not_4 <- exclude(mtcars, condition = cyl == 4, report_on = cyl)
 
 # exclude with another data
-exclude(mtcars, cyl4, dplyr::join_by(cyl), report_on = cyl)
+exclude(mtcars, cyl_not_4, dplyr::join_by(cyl), report_on = cyl)
 }
