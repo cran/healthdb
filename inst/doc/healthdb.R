@@ -29,11 +29,15 @@ hosp_df <- make_test_dat(vals_kept = c(glue("F{10:19}"), glue("F{100:199}"), noi
 # this is a local data.frame/tibble
 hosp_df %>% head()
 
+# convert Date to numeric to be consistent with claim_db
+hosp_df <- hosp_df %>% 
+  mutate(dates = julian(dates))
+
 ## ----eval=FALSE---------------------------------------------------------------
 #  ## not run
 #  claim_db %>%
 #    # identify the target codes
-#    filter(if_any(starts_with("diagx_"), ~ str_like(., c("291%", "292%", "303%", "304%", "305%")))) %>%
+#    filter(if_any(starts_with("diagx"), ~ str_like(., c("291%", "292%", "303%", "304%", "305%")))) %>%
 #    # each clnt has at least 2 records on different dates
 #    group_by(clnt_id) %>%
 #    # the n_distinct step is mainly for reducing computation in the next step
@@ -45,7 +49,7 @@ hosp_df %>% head()
 ## -----------------------------------------------------------------------------
 result1 <- claim_db %>%
   identify_row(
-vars = starts_with("diagx_"),
+vars = starts_with("diagx"),
 match = "start",
 vals = c(291:292, 303:305)
   )
@@ -53,7 +57,7 @@ vals = c(291:292, 303:305)
 ## -----------------------------------------------------------------------------
 result2 <- result1 %>%
   exclude(
-excl = identify_row(claim_db, starts_with("diagx_"), "in", "111"),
+excl = identify_row(claim_db, starts_with("diagx"), "in", "111"),
 by = "clnt_id"
   )
 
@@ -111,11 +115,13 @@ result_df %>%
   fetch_var(
 keys = c(clnt_id, year),
 linkage = list(
+  # the formula means from_table ~ get_variable
   # |clnt_id means matching on clnt_id only
   age_tab ~ c(age, sex) | clnt_id,
   address_tab ~ area_code
 )
   ) %>%
+  select(uid, clnt_id, dates, age, sex, area_code) %>% 
   head()
 
 ## -----------------------------------------------------------------------------
@@ -129,7 +135,7 @@ sud_def <- build_def(
   # below are argumets of define_case
   fn_args = list(
     # if length = 1, the single element will be use for every source
-    vars = list(starts_with("diagx_")),
+    vars = list(starts_with("diagx")),
     match = "start", # match ICD starts with vals
     vals = list(c(291:292, 303:305), glue("F{10:19}")),
     clnt_id = clnt_id,
@@ -164,7 +170,17 @@ bind_source(result_list,
   src = "src",
   uid = "uid",
   clnt_id = "clnt_id",
-  flag_date = c("flag_restrict_date", NA),
+  flag = c("flag_restrict_date", NA),
+  # force_proceed is needed to collect remote tables to local memory
   force_proceed = TRUE
 )
+
+## -----------------------------------------------------------------------------
+pool_case(result_list,
+          def = sud_def,
+          # your could skip summary with output_lvl = "raw"
+          output_lvl = "clnt",
+          # include records only from sources having valid records, see function documentation for more detail and other options
+          include_src = "has_valid",
+          force_proceed = TRUE)
 

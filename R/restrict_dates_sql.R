@@ -1,5 +1,5 @@
 #' @export
-restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, within = NULL, uid = NULL, mode = c("flag", "filter"), flag_at = c("left", "right"), dup.rm = TRUE, force_collect = FALSE, verbose = getOption("healthdb.verbose"), ...) {
+restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, within = NULL, uid = NULL, mode = c("flag", "filter"), flag_at = c("left", "right"), dup.rm = TRUE, force_collect = FALSE, verbose = getOption("healthdb.verbose"), check_missing = FALSE, ...) {
   mode <- rlang::arg_match0(mode, c("flag", "filter"))
   flag_at <- rlang::arg_match0(flag_at, c("left", "right"))
   rlang::check_dots_used()
@@ -16,15 +16,16 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
   }
 
   # check missing date_var
-  check_null <- data %>%
-    dplyr::count(no_date = is.na(.data[[date_var]])) %>%
-    dplyr::collect()
-  if (nrow(check_null) > 1) {
-    warning("Removed ", check_null[2, 2], " records with missing date_var")
-    data <- data %>%
-      dplyr::filter(!is.na(.data[[date_var]]))
+  if (check_missing) {
+    check_null <- data %>%
+      dplyr::count(no_date = is.na(.data[[date_var]])) %>%
+      dplyr::collect()
+    if (nrow(check_null) > 1) {
+      warning("Removed ", check_null[2, 2], " records with missing date_var")
+      data <- data %>%
+        dplyr::filter(!is.na(.data[[date_var]]))
+    }
   }
-
   # place holder for temp var names
   flag_restrict_date <- temp_nm_diff <- temp_nm_gap <- temp_nm_dup <- temp_nm_date <- temp_nm_last_date <- temp_nm_range <- temp_nm_flag_apart <- NULL
 
@@ -157,12 +158,13 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
     } else {
       data <- rlang::try_fetch(
         dplyr::compute(data,
-          temporary = TRUE,
-          indexes = list(clnt_id, date_var)
+          # maybe not worth it to create index
+          # indexes = list(clnt_id, date_var),
+          temporary = TRUE
         ),
         error = function(cnd) {
           rlang::warn("The attempt to write a temp table for performance boost failed. Actual error message:\n", parent = cnd)
-          return(data)
+          return(clean_db(data))
         }
       )
     }
@@ -172,6 +174,9 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
     row_date <- data %>%
       dplyr::select(dplyr::all_of(c(clnt_id, date_var))) %>%
       dplyr::rename(dplyr::all_of(nm_lu)) %>%
+      # here may give a warning as an order by is added somehow
+      # try to fix
+      dplyr::arrange() %>%
       dplyr::collapse()
 
     if (use.datediff(data)) {
@@ -197,7 +202,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
       data,
       error = function(cnd) {
         rlang::abort("The attempt of overlap join in SQL failed. Use force_collect = TRUE to download the data before interpreting apart & within condition. Actual error message:\n", parent = cnd)
-        return(data)
+        return(clean_db(data))
       }
     )
 
@@ -231,7 +236,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
     rlang::inform(c("i" = glue::glue('Apply restriction that each client must have {n} records that were{ifelse(!is.null(apart), paste(" at least", apart, "days apart"), "")}{ifelse(!is.null(within), paste(" within", within, "days"), "")}. {ifelse(mode == "filter", "Clients/groups which did not met the condition were excluded.", "Records that met the condition were flagged.")}')))
   }
 
-  return(data)
+  return(clean_db(data))
 }
 
 all_apart_sqlite <- function(data, date_var, n, apart, clnt_id, uid) {

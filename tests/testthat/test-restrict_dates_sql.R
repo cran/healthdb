@@ -81,7 +81,7 @@ test_that("check missing dates works", {
   df <- make_test_dat()
   df$dates[sample(1:nrow(df), 5)] <- NA
   db <- memdb_tbl(df)
-  expect_warning(restrict_dates(db, clnt_id, dates, n, within = within, uid = uid), "Removed 5 records")
+  expect_warning(restrict_dates(db, clnt_id, dates, n, within = within, uid = uid, check_missing = TRUE), "Removed 5 records")
 })
 
 test_that("edge case duplicated dates and n > 2", {
@@ -90,7 +90,10 @@ test_that("edge case duplicated dates and n > 2", {
   n <- 3
   ans <- if_date(x, n, within = within, detail = TRUE)
   db <- dbplyr::memdb_frame(clnt_id = 1, dates = x, uid = 1:length(x))
-  output_df <- restrict_dates(db, clnt_id, dates, n, within = within, uid = uid, flag_at = "right") %>% dplyr::collect()
+  output_df <- restrict_dates(db, clnt_id, dates, n, within = within, uid = uid, flag_at = "right") %>%
+    # test compatibility with compute()
+    dplyr::compute() %>%
+    dplyr::collect()
   expect_setequal(output_df$flag_restrict_date, as.numeric(ans))
 })
 
