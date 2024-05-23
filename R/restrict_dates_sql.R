@@ -8,6 +8,9 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
   clnt_id <- rlang::as_name(rlang::enquo(clnt_id))
   date_var <- rlang::as_name(rlang::enquo(date_var))
 
+  # SQL server does not accept subtracting dates
+  is_mssql_mysql <- use.datediff(data)
+
   has_uid <- !rlang::quo_is_null(rlang::enquo(uid))
   if (!has_uid) {
     stop("`uid` must be supplied for database input to produce deterministic result")
@@ -47,7 +50,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
       dplyr::group_by(.data[[clnt_id]]) %>%
       dbplyr::window_order(.data[[date_var]], .data[[uid]])
 
-    if(use.datediff(data)) {
+    if(is_mssql_mysql) {
       data <- all_apart_mssql(data, date_var, n, apart, clnt_id, uid)
     } else {
       data <- all_apart_sqlite(data, date_var, n, apart, clnt_id, uid)
@@ -100,13 +103,11 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
     )
     # browser()
 
-    # SQL server does not accept subtracting dates
-    is_mssql_mysql <- use.datediff(data)
-
     if (is_mssql_mysql) {
       data <- data %>%
         dplyr::mutate(
-          temp_nm_gap = dbplyr::sql(glue::glue_sql("ABS(DATEDIFF(day, {`date_var`}, {`temp_nm_diff`}))", .con = dbplyr::remote_con(data), temp_nm_diff = "temp_nm_diff"))
+          # temp_nm_gap = dbplyr::sql(glue::glue_sql("ABS(DATEDIFF(day, {`date_var`}, {`temp_nm_diff`}))", .con = dbplyr::remote_con(data), temp_nm_diff = "temp_nm_diff"))
+          temp_nm_gap = abs(difftime(.data[[date_var]], temp_nm_diff))
         )
     } else {
       data <- data %>%
@@ -164,7 +165,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
         ),
         error = function(cnd) {
           rlang::warn("The attempt to write a temp table for performance boost failed. Actual error message:\n", parent = cnd)
-          return(clean_db(data))
+          return(data)
         }
       )
     }
@@ -179,7 +180,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
       dplyr::arrange() %>%
       dplyr::collapse()
 
-    if (use.datediff(data)) {
+    if (is_mssql_mysql) {
       data <- data %>%
         dplyr::mutate(temp_nm_range = clock::add_days(.data[[date_var]], within))
     } else {
@@ -202,7 +203,6 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
       data,
       error = function(cnd) {
         rlang::abort("The attempt of overlap join in SQL failed. Use force_collect = TRUE to download the data before interpreting apart & within condition. Actual error message:\n", parent = cnd)
-        return(clean_db(data))
       }
     )
 
@@ -210,7 +210,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
       dplyr::group_by(.data[[clnt_id]], .data[[uid]]) %>%
       dbplyr::window_order(temp_nm_date)
 
-    if(use.datediff(data)) {
+    if(is_mssql_mysql) {
       data <- all_apart_mssql(data, "temp_nm_date", n, apart, clnt_id, uid)
     } else {
       data <- all_apart_sqlite(data, "temp_nm_date", n, apart, clnt_id, uid)
@@ -226,8 +226,7 @@ restrict_dates.tbl_sql <- function(data, clnt_id, date_var, n, apart = NULL, wit
   }
 
   data <- data %>%
-    dplyr::select(-dplyr::starts_with("temp_nm_")) %>%
-    dplyr::ungroup()
+    dplyr::select(-dplyr::starts_with("temp_nm_"))
 
 
   if (verbose) {
