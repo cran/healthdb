@@ -1,3 +1,11 @@
+# healthdb 0.4.0
+
+## Improvements
+
+-   fetch_var() documentation now indicates that it does not accept input from a pipe.
+-   collapse_episode() now works for remote table input.
+-   pool_case() now provides the source for the first valid and the latest records for linkage back to the source data.
+
 # healthdb 0.3.1
 
 ## Bug fixes

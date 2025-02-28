@@ -5,7 +5,7 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  install.packages("healthdb")
+# install.packages("healthdb")
 
 ## ----setup, message=FALSE-----------------------------------------------------
 library(dplyr)
@@ -34,17 +34,17 @@ hosp_df <- hosp_df %>%
   mutate(dates = julian(dates))
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  ## not run
-#  claim_db %>%
-#    # identify the target codes
-#    filter(if_any(starts_with("diagx"), ~ str_like(., c("291%", "292%", "303%", "304%", "305%")))) %>%
-#    # each clnt has at least 2 records on different dates
-#    group_by(clnt_id) %>%
-#    # the n_distinct step is mainly for reducing computation in the next step
-#    filter(n_distinct(dates) >= 2) %>%
-#    # any two dates within one year?
-#    filter((max(dates) - min(dates)) <= 365)
-#  ## end
+# ## not run
+# claim_db %>%
+#   # identify the target codes
+#   filter(if_any(starts_with("diagx"), ~ str_like(., c("291%", "292%", "303%", "304%", "305%")))) %>%
+#   # each clnt has at least 2 records on different dates
+#   group_by(clnt_id) %>%
+#   # the n_distinct step is mainly for reducing computation in the next step
+#   filter(n_distinct(dates) >= 2) %>%
+#   # any two dates within one year?
+#   filter((max(dates) - min(dates)) <= 365)
+# ## end
 
 ## -----------------------------------------------------------------------------
 result1 <- claim_db %>%
@@ -111,16 +111,15 @@ address_tab <- data.frame(
 result_df <- result_df %>% mutate(year = lubridate::year(as.Date(dates, origin = "1970-01-01")))
 
 # note that keys must be present in all tables
-result_df %>%
-  fetch_var(
-keys = c(clnt_id, year),
-linkage = list(
-  # the formula means from_table ~ get_variable
-  # |clnt_id means matching on clnt_id only
-  age_tab ~ c(age, sex) | clnt_id,
-  address_tab ~ area_code
-)
-  ) %>%
+fetch_var(result_df,
+          keys = c(clnt_id, year),
+          linkage = list(
+            # the formula means from_table ~ get_variable
+            # |clnt_id means matching on clnt_id only
+            age_tab ~ c(age, sex) | clnt_id,
+            address_tab ~ area_code
+          )
+) %>%
   select(uid, clnt_id, dates, age, sex, area_code) %>% 
   head()
 
