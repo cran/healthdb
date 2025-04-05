@@ -1,3 +1,9 @@
+# healthdb 0.4.1
+
+## Improvements
+
+-   Functions that take remote table as input now checks whether connection to database is working properly.
+
 # healthdb 0.4.0
 
 ## Improvements

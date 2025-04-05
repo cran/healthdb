@@ -430,24 +430,24 @@ diagnostic codes</p>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.47.1 [:memory:]</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates diagx diagx_1 diagx_2</span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1    39       1 16971 2927  292     999    </span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2    27       1 17317 2925  111     &lt;NA&gt;   </span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3    43       1 18494 3041  2923    3041   </span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 4    54       2 17395 999   999     999    </span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 5    40       2 17839 2922  2916    &lt;NA&gt;   </span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 6    31       2 18558 3040  3034    999</span></span></code></pre></div></li>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; 1    95       2 17386 999   &lt;NA&gt;    &lt;NA&gt;   </span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; 2    90       3 16606 999   &lt;NA&gt;    999    </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; 3    43       3 17758 2917  3030    3046   </span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 4    16       4 17134 2910  3055    &lt;NA&gt;   </span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 5    34       5 16671 3030  999     999    </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 6     1       5 17837 2922  2914    &lt;NA&gt;</span></span></code></pre></div></li>
 <li><p>Hospitalization with <a href="https://en.wikipedia.org/wiki/ICD-10">ICD-10</a> codes</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>hosp_df <span class="ot">&lt;-</span> <span class="fu">make_test_dat</span>(<span class="at">vals_kept =</span> <span class="fu">c</span>(<span class="fu">glue</span>(<span class="st">&quot;F{10:19}&quot;</span>), <span class="fu">glue</span>(<span class="st">&quot;F{100:199}&quot;</span>), <span class="at">noise_val =</span> <span class="st">&quot;999&quot;</span>), <span class="at">type =</span> <span class="st">&quot;data.frame&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># this is a local data.frame/tibble</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>hosp_df <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt;   uid clnt_id      dates diagx diagx_1 diagx_2</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1  81       1 2015-01-16   999     999    &lt;NA&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2  13       1 2017-02-01  F117    F167     999</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3  79       1 2018-04-22   999     999     999</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 4   4       2 2016-06-13  F139     F11     999</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 5   2       2 2017-11-14  F176    F128    &lt;NA&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 6  76       3 2016-03-11   999    &lt;NA&gt;    &lt;NA&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 1  22       1 2018-10-08  F140     999     999</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 2  49       2 2018-03-12  F124     F13     F10</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 3  48       2 2019-08-30  F114    F116    F127</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 4  10       3 2017-07-12  F105    F144    &lt;NA&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 5  46       4 2018-10-04  F170     F11    F183</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; 6  89       5 2018-09-22   999     999     999</span></span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># convert Date to numeric to be consistent with claim_db</span></span>
 <span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>hosp_df <span class="ot">&lt;-</span> hosp_df <span class="sc">%&gt;%</span> </span>
@@ -556,7 +556,7 @@ for collection.</p>
 <span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="co"># Number of rows in the current result</span></span>
 <span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="fu">nrow</span>(result_df)</span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [1] 27</span></span></code></pre></div>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt; [1] 26</span></span></code></pre></div>
 <p>Our data now only contains diagnoses which are probably not enough
 for further analyses. Let’s say we want to gather client demographics
 such as age and sex from other sources. This certainly can be done with
@@ -594,12 +594,12 @@ do this <code>data %&gt;% some_action %&gt;% fetch_var()</code>).</p>
 <span id="cb11-28"><a href="#cb11-28" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 6</span></span>
 <span id="cb11-29"><a href="#cb11-29" tabindex="-1"></a><span class="co">#&gt;     uid clnt_id dates   age sex   area_code</span></span>
 <span id="cb11-30"><a href="#cb11-30" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;     &lt;int&gt;</span></span>
-<span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="co">#&gt; 1    40       2 17839    25 M           180</span></span>
-<span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co">#&gt; 2    31       2 18558    25 M           180</span></span>
-<span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a><span class="co">#&gt; 3    36      13 16928    43 F            63</span></span>
-<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co">#&gt; 4    23      13 17615    43 F            63</span></span>
-<span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; 5    48      15 16916    10 M            24</span></span>
-<span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; 6    10      15 17785    10 M            24</span></span></code></pre></div></li>
+<span id="cb11-31"><a href="#cb11-31" tabindex="-1"></a><span class="co">#&gt; 1    34       5 16671    90 M            NA</span></span>
+<span id="cb11-32"><a href="#cb11-32" tabindex="-1"></a><span class="co">#&gt; 2     1       5 17837    90 M            44</span></span>
+<span id="cb11-33"><a href="#cb11-33" tabindex="-1"></a><span class="co">#&gt; 3    21      15 16989    58 F           101</span></span>
+<span id="cb11-34"><a href="#cb11-34" tabindex="-1"></a><span class="co">#&gt; 4     7      15 17882    58 F           101</span></span>
+<span id="cb11-35"><a href="#cb11-35" tabindex="-1"></a><span class="co">#&gt; 5     6      15 18137    58 F           101</span></span>
+<span id="cb11-36"><a href="#cb11-36" tabindex="-1"></a><span class="co">#&gt; 6    32      21 16631    46 F            NA</span></span></code></pre></div></li>
 </ol>
 </div>
 <div id="call-building-functions" class="section level2">
@@ -689,16 +689,16 @@ outputs from different calls.</p>
 <span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co">#&gt; • contains a value satisfied regular expression: ^F10|^F11|^F12|^F13|^F14|^F15|^F16|^F17|^F18|^F19</span></span>
 <span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co">#&gt; All unique value(s) and frequency in the result (as the conditions require just one of the columns containing target values; irrelevant values may come from other vars columns): </span></span>
-<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt;  999  F10 F101 F102 F103 F106 F108  F11 F110 F111 F112 F113 F114 F115 F117 F118 </span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co">#&gt;  999  F10 F100 F102 F103 F104 F105 F107 F108 F109  F11 F113 F114 F115 F116 F118 </span></span>
 <span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt;  F12 F122 F126 F127 F128 F129 F130 F134 F136 F138 F139  F14 F141 F143 F146 F147 </span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co">#&gt; F119 F120 F121 F123 F124 F126 F127  F13 F130 F131 F134 F139 F140 F141 F143 F144 </span></span>
 <span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; F148  F15 F150 F153 F154 F155 F156 F157 F159 F161 F163 F164 F165 F167 F169  F17 </span></span>
+<span id="cb14-35"><a href="#cb14-35" tabindex="-1"></a><span class="co">#&gt; F145 F146 F147 F148 F149 F150 F152 F155 F156 F158 F160 F162 F164 F167 F168 F170 </span></span>
 <span id="cb14-36"><a href="#cb14-36" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt; F171 F172 F174 F175 F176 F177 F178 F181 F182 F183 F184 F186 F187  F19 F194 F195 </span></span>
+<span id="cb14-37"><a href="#cb14-37" tabindex="-1"></a><span class="co">#&gt; F171 F172 F173 F174 F176 F177 F181 F183 F186 F187 F188 F189  F19 F190 F191 F192 </span></span>
 <span id="cb14-38"><a href="#cb14-38" tabindex="-1"></a><span class="co">#&gt;    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1    1 </span></span>
-<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt; F197 F198 NA&#39;s </span></span>
-<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a><span class="co">#&gt;    1    1    1</span></span>
+<span id="cb14-39"><a href="#cb14-39" tabindex="-1"></a><span class="co">#&gt; F199 NA&#39;s </span></span>
+<span id="cb14-40"><a href="#cb14-40" tabindex="-1"></a><span class="co">#&gt;    1    1</span></span>
 <span id="cb14-41"><a href="#cb14-41" tabindex="-1"></a><span class="co">#&gt; → -------------- Output all records--------------</span></span></code></pre></div>
 <p>Let’s check the results!</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># view the results</span></span>
@@ -707,20 +707,20 @@ outputs from different calls.</p>
 <span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; # Database: sqlite 3.47.1 [:memory:]</span></span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co">#&gt;   def   src     uid clnt_id dates diagx diagx_1 diagx_2 flag_restrict_n</span></span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;             &lt;int&gt;</span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 1 SUD   claim    39       1 16971 2927  292     999                   1</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 2 SUD   claim    27       1 17317 2925  111     &lt;NA&gt;                  1</span></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 3 SUD   claim    43       1 18494 3041  2923    3041                  1</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 4 SUD   claim    40       2 17839 2922  2916    &lt;NA&gt;                  1</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 5 SUD   claim    31       2 18558 3040  3034    999                   1</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 6 SUD   claim    42       3 17707 2918  291     3054                  0</span></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; 1 SUD   claim    43       3 17758 2917  3030    3046                  0</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; 2 SUD   claim    16       4 17134 2910  3055    &lt;NA&gt;                  0</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; 3 SUD   claim    34       5 16671 3030  999     999                   1</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co">#&gt; 4 SUD   claim     1       5 17837 2922  2914    &lt;NA&gt;                  1</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co">#&gt; 5 SUD   claim    11       6 18292 2927  304     999                   0</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co">#&gt; 6 SUD   claim     2       7 17483 3049  3036    &lt;NA&gt;                  0</span></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: flag_restrict_date &lt;int&gt;</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt;   def  src uid clnt_id dates diagx diagx_1 diagx_2</span></span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; 1 SUD hosp  13       1 17198  F117    F167     999</span></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 2 SUD hosp   4       2 16965  F139     F11     999</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 3 SUD hosp   2       2 17484  F176    F128    &lt;NA&gt;</span></span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 4 SUD hosp  34       3 18133  F177    F118     999</span></span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 5 SUD hosp  10       4 18013  F175    F143     999</span></span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 6 SUD hosp  36       5 16796  F141    F148     999</span></span></code></pre></div>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt; 1 SUD hosp  22       1 17812  F140     999     999</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 2 SUD hosp  49       2 17602  F124     F13     F10</span></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; 3 SUD hosp  48       2 18138  F114    F116    F127</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt; 4 SUD hosp  10       3 17359  F105    F144    &lt;NA&gt;</span></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 5 SUD hosp  46       4 17808  F170     F11    F183</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; 6 SUD hosp  26       6 17339  F115    F146    &lt;NA&gt;</span></span></code></pre></div>
 <p>At this point, the result from the claim database
 (<code>result[[1]]</code>) has not been collected locally. You could
 collect it manually, do further filtering, and then combine with the
@@ -739,16 +739,16 @@ naming feature.</p>
 <span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co">#&gt; # A tibble: 100 × 5</span></span>
 <span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co">#&gt;    src_No src     uid clnt_id  flag</span></span>
 <span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a><span class="co">#&gt;     &lt;int&gt; &lt;chr&gt; &lt;int&gt;   &lt;int&gt; &lt;int&gt;</span></span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt;  1      1 claim    39       1     1</span></span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt;  2      1 claim    27       1     0</span></span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt;  3      1 claim    43       1     0</span></span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;  4      1 claim    40       2     0</span></span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  5      1 claim    31       2     0</span></span>
-<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  6      1 claim    42       3     0</span></span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt;  7      1 claim    13       4     0</span></span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  8      1 claim    21       7     0</span></span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt;  9      1 claim    11       8     0</span></span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#&gt; 10      1 claim    25      10     0</span></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co">#&gt;  1      1 claim    43       3     0</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co">#&gt;  2      1 claim    16       4     0</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co">#&gt;  3      1 claim    34       5     0</span></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co">#&gt;  4      1 claim     1       5     0</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  5      1 claim    11       6     0</span></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  6      1 claim     2       7     0</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt;  7      1 claim    20       8     0</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt;  8      1 claim    29      12     0</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#&gt;  9      1 claim     4      13     0</span></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#&gt; 10      1 claim    14      14     0</span></span>
 <span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="co">#&gt; # ℹ 90 more rows</span></span></code></pre></div>
 <p><code>pool_case()</code> goes a few steps further than row bind. It
 also filters records with valid flags and can summarize by client/group.
@@ -761,20 +761,20 @@ output may not be flexible enough to meet your needs.</p>
 <span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>          <span class="co"># include records only from sources having valid records, see function documentation for more detail and other options</span></span>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>          <span class="at">include_src =</span> <span class="st">&quot;has_valid&quot;</span>,</span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>          <span class="at">force_proceed =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 34 × 10</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 38 × 10</span></span>
 <span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt;    def   clnt_id first_valid_date first_valid_src last_entry_date last_entry_src</span></span>
 <span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;   &lt;int&gt;            &lt;dbl&gt; &lt;chr&gt;                     &lt;dbl&gt; &lt;chr&gt;         </span></span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt;  1 SUD         1            16971 claim                     18494 hosp          </span></span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt;  2 SUD         2            16965 hosp                      17484 hosp          </span></span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a><span class="co">#&gt;  3 SUD         3            18133 hosp                      18133 hosp          </span></span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt;  4 SUD         4            18013 hosp                      18013 hosp          </span></span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt;  5 SUD         5            16796 hosp                      16796 hosp          </span></span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#&gt;  6 SUD         8            18527 hosp                      18527 hosp          </span></span>
-<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt;  7 SUD         9            17240 hosp                      17240 hosp          </span></span>
-<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co">#&gt;  8 SUD        10            17602 hosp                      17602 hosp          </span></span>
-<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a><span class="co">#&gt;  9 SUD        12            17478 hosp                      17559 hosp          </span></span>
-<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a><span class="co">#&gt; 10 SUD        14            17173 hosp                      18481 hosp          </span></span>
-<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a><span class="co">#&gt; # ℹ 24 more rows</span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt;  1 SUD         1            17812 hosp                      17812 hosp          </span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt;  2 SUD         2            17602 hosp                      18138 hosp          </span></span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a><span class="co">#&gt;  3 SUD         3            17359 hosp                      17359 hosp          </span></span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt;  4 SUD         4            17808 hosp                      17808 hosp          </span></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt;  5 SUD         6            17339 hosp                      17556 hosp          </span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#&gt;  6 SUD         7            16614 hosp                      16614 hosp          </span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt;  7 SUD         8            16941 hosp                      16941 hosp          </span></span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co">#&gt;  8 SUD         9            17477 hosp                      17477 hosp          </span></span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a><span class="co">#&gt;  9 SUD        10            17693 hosp                      17693 hosp          </span></span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a><span class="co">#&gt; 10 SUD        11            17268 hosp                      17268 hosp          </span></span>
+<span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a><span class="co">#&gt; # ℹ 28 more rows</span></span>
 <span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a><span class="co">#&gt; # ℹ 4 more variables: raw_in_claim &lt;dbl&gt;, raw_in_hosp &lt;dbl&gt;,</span></span>
 <span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a><span class="co">#&gt; #   valid_in_claim &lt;int&gt;, valid_in_hosp &lt;int&gt;</span></span></code></pre></div>
 </div>
